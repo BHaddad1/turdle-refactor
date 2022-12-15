@@ -21,6 +21,7 @@ var gameOverBox = document.querySelector("#game-over-section");
 var gameOverGuessCount = document.querySelector("#game-over-guesses-count");
 var gameOverGuessGrammar = document.querySelector("#game-over-guesses-plural");
 const gameOverTextHeadLine = document.querySelector("informational-text");
+const statsSection = document.getElementById("stats-section");
 var firstLastCell = document.getElementById("cell-6-25");
 var secondLastCell = document.getElementById("cell-6-26");
 var thirdLastCell = document.getElementById("cell-6-27");
@@ -128,7 +129,20 @@ function submitGuess() {
     errorMessage.innerText = "";
     compareGuess();
     if (checkForWin()) {
-      setTimeout(declareWinner, 1000);
+      setTimeout(function () {
+        viewGameOverMessage();
+        gameOverBox.innerHTML = `<h3 id="game-over-message">Yay!</h3>
+        <p class="informational-text">
+          You did it! It took you
+          <span id="game-over-guesses-count">${currentRow}</span> guess<span
+            id="game-over-guesses-plural"
+            >es</span
+          >
+          to find the correct word.
+        </p>`;
+        recordGameStats();
+        setTimeout(startNewGame, 4000);
+      }, 1000);
     } else if (!checkForWin() && checkForLastRow()) {
       errorMessage.innerText = "You didn't guess the correct word";
       setTimeout(function () {
@@ -139,7 +153,7 @@ function submitGuess() {
         </p>`;
         errorMessage.innerText = "";
         recordGameStats();
-        setTimeout(startNewGame, 4000);
+        setTimeout(startNewGame, 1000);
       }, 4000);
     } else {
       changeRow();
@@ -231,7 +245,7 @@ function recordGameStats() {
 
 function changeGameOverText() {
   gameOverGuessCount.innerText = currentRow;
-  if (currentRow < 2 && checkForWin()) {
+  if (currentRow < 2) {
     gameOverGuessGrammar.classList.add("collapsed");
   } else {
     gameOverGuessGrammar.classList.remove("collapsed");
@@ -294,6 +308,27 @@ function viewStats() {
   viewGameButton.classList.remove("active");
   viewRulesButton.classList.remove("active");
   viewStatsButton.classList.add("active");
+  statsSection.innerHTML = `<h3>GAME STATS</h3>
+        <p class="informational-text">
+          You've played <span id="stats-total-games">${
+            gamesPlayed.length
+          }</span> games.
+        </p>
+        <p class="informational-text">
+          You've guessed the correct word
+          <span id="stats-percent-correct">${gamesPlayed.reduce((acc, cur) => {
+            acc += cur.solved === true;
+            return (acc / gamesPlayed.length) * 100;
+          }, 0)}</span>% of the time.
+        </p>
+        <p class="informational-text">
+          On average, it takes you
+          <span id="stats-average-guesses">${gamesPlayed.reduce((acc, cur) => {
+            acc += cur.guesses;
+            return acc / gamesPlayed.length;
+          }, 0)}</span> guesses to find
+          the correct word.
+        </p>`;
 }
 
 function viewGameOverMessage() {
