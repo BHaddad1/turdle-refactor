@@ -129,7 +129,20 @@ function submitGuess() {
     errorMessage.innerText = "";
     compareGuess();
     if (checkForWin()) {
-      setTimeout(declareWinner, 1000);
+      setTimeout(function () {
+        viewGameOverMessage();
+        gameOverBox.innerHTML = `<h3 id="game-over-message">Yay!</h3>
+        <p class="informational-text">
+          You did it! It took you
+          <span id="game-over-guesses-count">${currentRow}</span> guess<span
+            id="game-over-guesses-plural"
+            >es</span
+          >
+          to find the correct word.
+        </p>`;
+        recordGameStats();
+        setTimeout(startNewGame, 4000);
+      }, 1000);
     } else if (!checkForWin() && checkForLastRow()) {
       errorMessage.innerText = "You didn't guess the correct word";
       setTimeout(function () {
@@ -140,7 +153,7 @@ function submitGuess() {
         </p>`;
         errorMessage.innerText = "";
         recordGameStats();
-        setTimeout(startNewGame, 4000);
+        setTimeout(startNewGame, 1000);
       }, 4000);
     } else {
       changeRow();
@@ -232,9 +245,8 @@ function recordGameStats() {
 
 function changeGameOverText() {
   gameOverGuessCount.innerText = currentRow;
-  if (currentRow < 2 && checkForWin()) {
+  if (currentRow < 2) {
     gameOverGuessGrammar.classList.add("collapsed");
-    viewGameOverMessage();
   } else {
     gameOverGuessGrammar.classList.remove("collapsed");
   }
@@ -311,7 +323,10 @@ function viewStats() {
         </p>
         <p class="informational-text">
           On average, it takes you
-          <span id="stats-average-guesses">null</span> guesses to find
+          <span id="stats-average-guesses">${gamesPlayed.reduce((acc, cur) => {
+            acc += cur.guesses;
+            return (acc / gamesPlayed.length) * 100;
+          }, 0)}</span> guesses to find
           the correct word.
         </p>`;
 }
