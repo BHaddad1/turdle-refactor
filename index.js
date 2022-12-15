@@ -325,7 +325,7 @@ function viewStats() {
           On average, it takes you
           <span id="stats-average-guesses">${gamesPlayed.reduce((acc, cur) => {
             acc += cur.guesses;
-            return (acc / gamesPlayed.length) * 100;
+            return acc / gamesPlayed.length;
           }, 0)}</span> guesses to find
           the correct word.
         </p>`;
