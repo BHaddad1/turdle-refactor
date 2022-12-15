@@ -21,6 +21,7 @@ var gameOverBox = document.querySelector("#game-over-section");
 var gameOverGuessCount = document.querySelector("#game-over-guesses-count");
 var gameOverGuessGrammar = document.querySelector("#game-over-guesses-plural");
 const gameOverTextHeadLine = document.querySelector("informational-text");
+const statsSection = document.getElementById("stats-section");
 var firstLastCell = document.getElementById("cell-6-25");
 var secondLastCell = document.getElementById("cell-6-26");
 var thirdLastCell = document.getElementById("cell-6-27");
@@ -233,6 +234,7 @@ function changeGameOverText() {
   gameOverGuessCount.innerText = currentRow;
   if (currentRow < 2 && checkForWin()) {
     gameOverGuessGrammar.classList.add("collapsed");
+    viewGameOverMessage();
   } else {
     gameOverGuessGrammar.classList.remove("collapsed");
   }
@@ -294,6 +296,24 @@ function viewStats() {
   viewGameButton.classList.remove("active");
   viewRulesButton.classList.remove("active");
   viewStatsButton.classList.add("active");
+  statsSection.innerHTML = `<h3>GAME STATS</h3>
+        <p class="informational-text">
+          You've played <span id="stats-total-games">${
+            gamesPlayed.length
+          }</span> games.
+        </p>
+        <p class="informational-text">
+          You've guessed the correct word
+          <span id="stats-percent-correct">${gamesPlayed.reduce((acc, cur) => {
+            acc += cur.solved === true;
+            return (acc / gamesPlayed.length) * 100;
+          }, 0)}</span>% of the time.
+        </p>
+        <p class="informational-text">
+          On average, it takes you
+          <span id="stats-average-guesses">null</span> guesses to find
+          the correct word.
+        </p>`;
 }
 
 function viewGameOverMessage() {
